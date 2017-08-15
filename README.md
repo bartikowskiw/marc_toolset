@@ -34,3 +34,30 @@ try {
     echo "Record not found.";
 }
 ```
+
+## MarcDump
+
+```php
+use Umlts\MarcToolset\MarcDump;
+
+// Create object and call method
+$marc_file = __DIR__ . '/../data/random.mrc';
+( new MarcDump( $marc_file ) )->dump();
+
+// or call statically
+MarcDump::dump( $marc_file );
+```
+
+## MarcCount
+
+```php
+use Umlts\MarcToolset\MarcCount;
+
+$marc_file = __DIR__ . '/../data/random.mrc';
+
+// Create object and call method
+echo ( new MarcCount( $marc_file ) )->count();
+
+// or call statically
+echo MarcCount::count( $marc_file );
+```
