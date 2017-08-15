@@ -69,7 +69,10 @@ class MarcCount {
     }
     
     /**
-     * Counts records in a MARC file
+     * Counts records in a MARC file.
+     * 
+     * @todo: This is freakin' slow. Improve maybe. Get rid of File_MARC
+     * and use plain 
      * 
      * @param string $marc_file
      *   Path to file. Optional when called as method. Needed if called
@@ -101,9 +104,7 @@ class MarcCount {
         }
         
         $first = true;
-        while ( $record = $marc->next() ) {
-             $count++;
-        }        
+        while ( $record = $marc->nextRaw() ) { $count++; }        
         
         return $count;
     }
