@@ -1,0 +1,26 @@
+{
+    "name": "umlts/marc_toolset",
+    "type": "project",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "bartikowskiw",
+            "email": "bartikowskiw@missouri.edu"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Umlts\\MarcToolset\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://vcs.missouri.edu/umlts/composer_repository/raw/master/packages.json"
+        }
+    ],
+    "require": {
+        "pear/file_marc": "^1.1"
+    }
+}
