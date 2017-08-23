@@ -150,7 +150,7 @@ class MarcMapWriter {
 
             // Parse only the digits of the OCLC number
             preg_match( '/(?P<oclc>[0-9]+)$/', $record->getField( '001' )->getData(), $result );
-            $oclc = $result['oclc'];
+            $oclc = empty( $result['oclc'] ) ? -1 : $result['oclc'];
 
             $stmt->bindValue( ':oclc', $oclc, SQLITE3_INTEGER );
             $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
