@@ -27,6 +27,7 @@ class MarcMapWriter {
      * @var string
      */
     private $create_query = '
+        DROP TABLE IF EXISTS `record`;
         CREATE TABLE IF NOT EXISTS `record` (
             `id` integer PRIMARY KEY,
             `oclc` integer,
