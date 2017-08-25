@@ -13,7 +13,7 @@ of records.
 ### Usage
 
 ```php
-use Umlts\MarcSwissKnife\MarcMapWriter;
+use Umlts\MarcToolset\MarcMapWriter;
 
 $db = new SQLite3( $db_file );
 $mm = ( new MarcMapWriter( $marc_file, $db ) )->map();
@@ -24,7 +24,7 @@ $mm = ( new MarcMapWriter( $marc_file, $db ) )->map();
 Looks up a MARC record by OCLC (MARC Tag 001) number and reads it.
 
 ```php
-use Umlts\MarcSwissKnife\MarcMapReader;
+use Umlts\MarcToolset\MarcMapReader;
 
 $mr = new MarcMapReader( $marc_file, $db );
 try {
