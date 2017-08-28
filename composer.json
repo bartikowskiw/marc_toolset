@@ -23,5 +23,8 @@
     "require": {
         "pear/file_marc": "^1.1",
         "pear/Validate_ISPN": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.3"
     }
 }
