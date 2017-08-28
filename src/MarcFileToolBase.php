@@ -90,4 +90,31 @@ class MarcFileToolBase {
         return $this;
     }
 
+    protected final function staticCall() {
+        return !isset( $this );
+    }
+
+
+    protected final function getMarc( string $marc_file ) {
+
+        if ( self::staticCall() ) {                                    // Static call
+
+            if ( empty( $marc_file ) ) {
+                throw new \InvalidArgumentException( 'No MARC file given.' );
+            }
+            return self::initMarc( $marc_file );
+
+        } else {                                                        // Called as method
+
+            if ( empty( $this->marc_file ) ) {
+                throw new \RuntimeException(
+                    'MARC file not set. Use setFile( $path_to_marc_file ) first.'
+                );
+            }
+            return $this->marc;
+
+        }
+
+    }
+
 }
