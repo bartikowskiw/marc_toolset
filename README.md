@@ -60,4 +60,19 @@ echo ( new MarcCount( $marc_file ) )->count();
 
 // or call statically
 echo MarcCount::count( $marc_file );
+
+```
+
+## MarcLint
+
+```php
+use Umlts\MarcToolset\MarcLint;
+
+$marc_file = __DIR__ . '/../data/random.mrc';
+
+// Create object and call check method
+( new MarcLint( $marc_file ) )->check();
+
+// or call statically
+MarcLint::check( $marc_file );
 ```
