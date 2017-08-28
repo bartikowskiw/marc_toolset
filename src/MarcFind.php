@@ -15,7 +15,7 @@ use Umlts\MarcToolset\MarcRecordNotFoundException;
  **/
 class MarcFind extends MarcFileToolBase {
 
-    public function find( string $marc_tag, string $regexp = '.*' ) : self {
+    public function find( string $marc_tag, string $regexp = '.*', bool $ansi = TRUE ) : self {
         $records = [];
         $first = TRUE;
         while ( TRUE ) {
@@ -26,7 +26,7 @@ class MarcFind extends MarcFileToolBase {
                 } else {
                     echo self::sep;
                 }
-                echo MarcDump::formatDump( (string) $record );
+                echo MarcDump::formatDump( (string) $record, $ansi );
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
             }
