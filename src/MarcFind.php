@@ -26,7 +26,7 @@ class MarcFind extends MarcFileToolBase {
                 } else {
                     echo self::sep;
                 }
-                echo MarcDump::formatDump( (string) $record, $ansi );
+                echo MarcDump::dumpRecord( $record, $ansi );
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
             }
