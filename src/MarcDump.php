@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Umlts\MarcToolset;
 
 use File\MARC;
+use Umlts\MarcToolset\AnsiCodes;
 use Umlts\MarcToolset\MarcFileToolBase;
 
 /**
@@ -24,23 +25,23 @@ class MarcDump extends MarcFileToolBase {
         // Add ANSI Colors to Fields
         $dump = preg_replace(
             '/(^[0-9]+)(.)(..)(.)/m',
-            self::ANSI_yellow . '\1' . self::ANSI_reset
+            AnsiCodes::yellow . '\1' . AnsiCodes::reset
             . '\2'
-            . self::ANSI_magenta . '\3 ' . self::ANSI_reset,
+            . AnsiCodes::magenta . '\3 ' . AnsiCodes::reset,
             $dump
         );
 
         // Add ANSI Colors to Subfields
         $dump = preg_replace(
             '/_[a-z0-9]/m',
-            self::ANSI_dim . '\0 ' . self::ANSI_reset,
+            AnsiCodes::dim . '\0 ' . AnsiCodes::reset,
             $dump
         );
 
         // Add ANSI Colors to Fields
         $dump = preg_replace(
             '/^(LDR)(.)(.*)/m',
-            self::ANSI_bold . '\1\2\3' . self::ANSI_reset,
+            AnsiCodes::bold . '\1\2\3' . AnsiCodes::reset,
             $dump
         );
 

@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Umlts\MarcToolset;
 
 use File\MARC;
+use Umlts\MarcToolset\AnsiCodes;
 use Umlts\MarcToolset\MarcFileToolBase;
 
 /**
@@ -37,16 +38,16 @@ class MarcLint extends MarcFileToolBase {
             $id = $record->getField( '001' )->getData();
         }
 
-        if ( $ansi ) { echo self::ANSI_magenta; }
+        if ( $ansi ) { echo AnsiCodes::magenta; }
         echo "001\t$id\n";
-        if ( $ansi ) { echo self::ANSI_reset; }
+        if ( $ansi ) { echo AnsiCodes::reset; }
 
         foreach ( $warnings as $warning ) {
             $warning = preg_replace( '/(^[0-9]+)(:)\s*/m', '\1' . "\t", $warning );
             if ( $ansi ) {
                 $warning = preg_replace(
                     '/(^[0-9]+)/m',
-                    self::ANSI_yellow . '\1' . self::ANSI_reset,
+                    AnsiCodes::yellow . '\1' . AnsiCodes::reset,
                     $warning
                 );
             }
