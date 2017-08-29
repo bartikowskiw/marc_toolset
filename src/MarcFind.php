@@ -27,12 +27,15 @@ class MarcFind extends MarcFileToolBase {
         return $this;
     }
 
-    public function findAndDump( bool $ansi = TRUE ) : self {
+    public function findAndDump( bool $ansi = TRUE, bool $mark_hits = TRUE ) : self {
         $first = TRUE;
         while ( TRUE ) {
             try {
                 $record = $this->next();
                 if ( !$first ) { echo self::sep; }
+                if ( $mark_hits ) {
+                    $record = $this->markMatching( $record );
+                }
                 echo MarcDump::dumpRecord( $record, $ansi );
                 $first = FALSE;
             } catch ( MarcRecordNotFoundException $e ) {
@@ -95,6 +98,38 @@ class MarcFind extends MarcFileToolBase {
         } else {
             return $this->checkControlfield( $field );
         }
+    }
+
+    private function markMatching( \File_MARC_Record $record ) : \File_MARC_Record {
+        $fields = $record->getFields( $this->mask->getTag(), TRUE );
+        if ( empty( $fields ) ) { return $record; }
+        foreach ( $fields as $field ) {
+            if ( $field->isControlField() ) {
+                if ( $this->checkControlfield( $field ) ) {
+                    $field = $this->markElement( $field );
+                }
+            } else {
+                $subfields = $this->getMatchingSubfields( $field );
+                foreach ( $subfields as $subfield ) {
+                    if ( $this->checkSubfield( $subfield ) ) {
+                        $subfield = $this->markElement( $subfield );
+                    }
+                }
+            }
+        }
+        return $record;
+    }
+
+    private function markElement( $el ) {
+        $data = $el->getData();
+        $data = preg_replace(
+            $this->mask->getRegexp(),
+            self::ANSI_negative . '\0'  . self::ANSI_reset,
+            $data
+        );
+        //$data = self::ANSI_negative . $data . self::ANSI_reset;
+        $el->setData( $data );
+        return $el;
     }
 
     private function checkControlfield( \File_MARC_Control_Field $field ) : bool {

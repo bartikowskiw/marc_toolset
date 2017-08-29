@@ -17,8 +17,11 @@ class MarcFileToolBase {
     const ANSI_red = "\e[31m";
     const ANSI_yellow = "\e[33m";
     const ANSI_magenta = "\e[95m";
-    const ANSI_dim = "\e[2m";
+
     const ANSI_bold = "\e[1m";
+    const ANSI_dim = "\e[2m";
+    const ANSI_underline = "\e[4m";
+    const ANSI_negative = "\e[7m";
     const ANSI_reset = "\e[0m";
 
     /**
