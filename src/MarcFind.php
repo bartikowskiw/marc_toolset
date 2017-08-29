@@ -6,27 +6,35 @@ namespace Umlts\MarcToolset;
 
 use File\MARC;
 use Umlts\MarcToolset\MarcFileToolBase;
+use Umlts\MarcToolset\MarcSearchMask;
 use Umlts\MarcToolset\MarcDump;
 use Umlts\MarcToolset\MarcRecordNotFoundException;
-
 
 /**
  * Looks for records
  **/
 class MarcFind extends MarcFileToolBase {
 
-    public function find( string $marc_tag, string $regexp = '.*', bool $ansi = TRUE ) : self {
-        $records = [];
+    private $mask;
+
+    public function __construct( string $marc_file = NULL ) {
+        parent::__construct( $marc_file );
+        $this->mask = new MarcSearchMask();
+    }
+
+    public function setMask( MarcSearchMask $mask ) : self {
+        $this->mask = $mask;
+        return $this;
+    }
+
+    public function findAndDump( bool $ansi = TRUE ) : self {
         $first = TRUE;
         while ( TRUE ) {
             try {
-                $record = $this->findNext( $marc_tag, $regexp );
-                if ( $first ) {
-                    $first = FALSE;
-                } else {
-                    echo self::sep;
-                }
+                $record = $this->next();
+                if ( !$first ) { echo self::sep; }
                 echo MarcDump::dumpRecord( $record, $ansi );
+                $first = FALSE;
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
             }
@@ -34,12 +42,13 @@ class MarcFind extends MarcFileToolBase {
         return $this;
     }
 
-
-    public function findNext( string $marc_tag, string $regexp = '.*' ) {
+    public function next() {
 
         while ( $record = $this->marc->next() ) {
-            if ( $this->findInRecord( $record, $marc_tag, $regexp ) ) {
-                return $record;
+            $fields = $this->getMatchingFields( $record );
+            if ( empty( $fields ) ) { continue; }
+            foreach ( $fields as $field ) {
+                if ( $this->checkField( $field ) ) { return $record; }
             }
         }
 
@@ -47,28 +56,61 @@ class MarcFind extends MarcFileToolBase {
 
     }
 
-    public function findInRecord( \File_MARC_Record $record, string $marc_tag, string $regexp ) : bool {
-        $fields = $record->getFields( $marc_tag, TRUE );
-        if ( empty( $fields ) ) { return FALSE; }
+    public function getMatchingFields( \File_MARC_Record $record ) {
 
-        foreach ( $fields as $field ) {
-            if ( $this->findInField( $field, $marc_tag, $regexp ) ) { return TRUE; }
+        $fields = $record->getFields( $this->mask->getTag(), TRUE );
+        if ( empty( $fields ) ) { return []; }
+        foreach ( $fields as $key => $field ) {
+            if ( !$this->checkIndicators( $field ) ) { unset( $fields[ $key ] ); }
         }
-
-        return FALSE;
+        return $fields;
     }
 
-    public function findInField( \File_MARC_Field $field, string $marc_tag, string $regexp ) {
-        if ( $field->isControlField() ) {
-            return preg_match( '/' . $regexp . '/i', $field->getData() );
-        } else {
-            $subfields = $field->getSubfields();
-            foreach ( $subfields as $subfield ) {
-                if ( preg_match( '/' . $regexp . '/i', $subfield->getData() ) ) {
-                    return TRUE;
-                }
+    private function checkIndicators( \File_MARC_Field $field ) : bool {
+
+        // Control fields do not have indicators
+        if ( $field->isControlField() ) { return TRUE; }
+
+        return preg_match( '/' . $this->mask->getInd1() . '/', $field->getIndicator( 1 ) )
+          && preg_match( '/' . $this->mask->getInd2() . '/', $field->getIndicator( 2 ) );
+    }
+
+    private function getMatchingSubfields( \File_MARC_Field $field ) : array {
+        $matching = [];
+        $subfields = $field->getSubfields();
+        foreach ( $subfields as $subfield ) {
+            if ( preg_match( '/' . $this->mask->getSubfield() . '/i', $subfield->getCode() ) ) {
+                $matching[] = $subfield;
             }
         }
+        return $matching;
+    }
+
+    private function checkField( \File_MARC_Field $field ) : bool{
+        if ( $field->isDataField() ) {
+            if ( !$this->checkIndicators( $field ) ) { return FALSE; }
+            $subfields = $this->getMatchingSubfields( $field );
+            if ( empty( $subfields ) ) { return FALSE; }
+            return $this->checkSubfields( $subfields );
+        } else {
+            return $this->checkControlfield( $field );
+        }
+    }
+
+    private function checkControlfield( \File_MARC_Control_Field $field ) : bool {
+        return preg_match( $this->mask->getRegexp(), $field->getData() ) > 0;
+    }
+
+    private function checkSubfield( \File_MARC_Subfield $subfield ) : bool {
+        return preg_match( $this->mask->getRegexp(), $subfield->getData() ) > 0;
+    }
+
+    private function checkSubfields( array $subfields ) : bool {
+        if ( empty( $subfields ) ) { return FALSE; }
+        foreach ( $subfields as $subfield ) {
+            if ( $this->checkSubfield( $subfield ) ) { return TRUE; }
+        }
         return FALSE;
     }
+
 }
