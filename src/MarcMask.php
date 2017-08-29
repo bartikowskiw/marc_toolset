@@ -3,7 +3,7 @@
 declare( strict_types = 1 );
 namespace Umlts\MarcToolset;
 
-class MarcSearchMask {
+class MarcMask {
 
     private $tag;
     private $subfield;

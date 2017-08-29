@@ -5,12 +5,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use File\MARC;
 use Umlts\MarcToolset\MarcFind;
-use Umlts\MarcToolset\MarcSearchMask;
+use Umlts\MarcToolset\MarcMask;
 
 
 $marc_file = __DIR__ . '/../data/random.mrc';
 
-$records = ( new MarcFind( $marc_file ) )
-    ->setMask( new MarcSearchMask( '...', '.', '.', '.', 'beef' ) );
+$records = new MarcFind( $marc_file, new MarcMask( '...', '.', '.', '.', 'beef' ) );
 echo $records;
 echo "\n";
