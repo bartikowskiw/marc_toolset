@@ -37,7 +37,7 @@ class MarcFind extends MarcFileToolBase {
             try {
                 $record = $this->next();
                 if ( !$first ) { echo self::sep; }
-                if ( $mark_hits ) {
+                if ( $mark_hits && $ansi ) {
                     $record = $this->checker->markMatching( $record );
                 }
                 echo MarcDump::dumpRecord( $record, $ansi );
@@ -61,13 +61,6 @@ class MarcFind extends MarcFileToolBase {
         return $this;
     }
 
-    public function __toString() {
-        ob_start();
-        $this->echoDump();
-        $content = ob_get_clean();
-        return $content;
-    }
-
     public function next() {
 
         while ( $record = $this->marc->next() ) {
@@ -76,6 +69,13 @@ class MarcFind extends MarcFileToolBase {
 
         throw new MarcRecordNotFoundException( 'Record not found.' );
 
+    }
+
+    public function __toString() {
+        ob_start();
+        $this->echoDump();
+        $content = ob_get_clean();
+        return $content;
     }
 
 }
