@@ -11,6 +11,6 @@ use Umlts\MarcToolset\MarcSearchMask;
 $marc_file = __DIR__ . '/../data/random.mrc';
 
 $records = ( new MarcFind( $marc_file ) )
-    ->setMask( new MarcSearchMask( '...', '.', '.', '.', 'beef' ) )
-    ->findAndDump();
+    ->setMask( new MarcSearchMask( '...', '.', '.', '.', 'beef' ) );
+echo $records;
 echo "\n";

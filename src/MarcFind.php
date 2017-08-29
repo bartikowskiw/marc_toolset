@@ -27,7 +27,7 @@ class MarcFind extends MarcFileToolBase {
         return $this;
     }
 
-    public function findAndDump( bool $ansi = TRUE, bool $mark_hits = TRUE ) : self {
+    public function echoDump( bool $ansi = TRUE, bool $mark_hits = TRUE ) : self {
         $first = TRUE;
         while ( TRUE ) {
             try {
@@ -43,6 +43,25 @@ class MarcFind extends MarcFileToolBase {
             }
         }
         return $this;
+    }
+
+    public function echoRaw() : self {
+        while ( TRUE ) {
+            try {
+                $record = $this->next();
+                echo $record->toRaw();
+            } catch ( MarcRecordNotFoundException $e ) {
+                break;
+            }
+        }
+        return $this;
+    }
+
+    public function __toString() {
+        ob_start();
+        $this->echoDump();
+        $content = ob_get_clean();
+        return $content;
     }
 
     public function next() {
@@ -127,7 +146,6 @@ class MarcFind extends MarcFileToolBase {
             self::ANSI_negative . '\0'  . self::ANSI_reset,
             $data
         );
-        //$data = self::ANSI_negative . $data . self::ANSI_reset;
         $el->setData( $data );
         return $el;
     }
