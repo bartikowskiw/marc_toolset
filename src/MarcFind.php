@@ -61,6 +61,18 @@ class MarcFind extends MarcFileToolBase {
         return $this;
     }
 
+    public function getRecords() : array {
+        $records = [];
+        while ( TRUE ) {
+            try {
+                $records[] = $this->next();
+            } catch ( MarcRecordNotFoundException $e ) {
+                break;
+            }
+        }
+        return $records;
+    }
+
     public function next() {
 
         while ( $record = $this->marc->next() ) {
@@ -68,7 +80,6 @@ class MarcFind extends MarcFileToolBase {
         }
 
         throw new MarcRecordNotFoundException( 'Record not found.' );
-
     }
 
     public function __toString() {
