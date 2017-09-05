@@ -125,9 +125,17 @@ class MarcMask {
     /**
      * @var string $string
      * @var string $flags
+     *   Flags. Valid values: i, m, s, x, S, U, X, J, u.
+     *   'e' is forbidden and not supported by PHP >= 7.0 anyways.
+     * @see https://secure.php.net/manual/en/reference.pcre.pattern.modifiers.php
      * @return self
+     * @throws RuntimeException
+     *   When flags are not valid.
      */
     public function setRegexp( string $regexp, string $flags = 'i' ) : self {
+        if ( !preg_match( '/^[imsxSUXJu]*$/', $flags ) ) {
+            throw new \RuntimeException( 'PCRE flags not valid! See https://secure.php.net/manual/en/reference.pcre.pattern.modifiers.php.' );
+        }
         $this->regexp = '/' . $regexp . '/' . $flags;
         return $this;
     }
