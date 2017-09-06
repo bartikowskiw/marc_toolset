@@ -19,9 +19,9 @@ class MarcReplace extends MarcFileToolBase {
 
     private $mask;
     private $checker;
-    private $replace = '\0';
+    private $replace;
 
-    public function __construct( string $marc_file = NULL, MarcMask $mask, string $replace ) {
+    public function __construct( string $marc_file = NULL, MarcMask $mask, string $replace = '\0' ) {
         parent::__construct( $marc_file );
         $this->setMask( $mask );
         $this->setReplace( $replace );
@@ -38,7 +38,7 @@ class MarcReplace extends MarcFileToolBase {
         return $this;
     }
 
-    public function replaceAndEchoRaw() {
+    public function echoRaw() {
         while ( TRUE ) {
             try {
                 $record = $this->replaceNext( $this->replace );
