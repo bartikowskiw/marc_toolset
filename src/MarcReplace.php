@@ -49,11 +49,12 @@ class MarcReplace extends MarcFileToolBase {
         }
     }
 
-    public function echoDump( bool $ansi=TRUE, bool $mark_hits = TRUE ) {
+    public function echoDump( bool $ansi=TRUE, bool $mark_hits = TRUE ) : self {
         $first = TRUE;
 
-        if ( $mark_hits ) {
-            $replace = AnsiCodes::negative . $this->replace . AnsiCodes::reset;
+        $replace = $this->replace;
+        if ( $ansi && $mark_hits ) {
+            $this->setReplace( AnsiCodes::negative . $this->replace . AnsiCodes::reset );
         }
 
         while ( TRUE ) {
@@ -62,13 +63,17 @@ class MarcReplace extends MarcFileToolBase {
                 if ( !$first ) { echo self::sep; }
                 $first = FALSE;
 
-                $record = $this->next( $replace );
+                $record = $this->next();
                 echo MarcDump::dumpRecord( $record, $ansi );
 
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
             }
         }
+
+        $this->replace = $replace;
+
+        return $this;
     }
 
     public function next() : \File_MARC_Record {
