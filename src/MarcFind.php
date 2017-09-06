@@ -17,8 +17,8 @@ use Umlts\MarcToolset\MarcRecordNotFoundException;
  **/
 class MarcFind extends MarcFileToolBase {
 
-    protected $mask;
-    protected $checker;
+    private $mask;
+    private $checker;
 
     public function __construct( string $marc_file = NULL, MarcMask $mask ) {
         parent::__construct( $marc_file );
