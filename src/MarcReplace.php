@@ -15,12 +15,33 @@ use Umlts\MarcToolset\MarcRecordNotFoundException;
 /**
  * Looks for records
  **/
-class MarcReplace extends MarcFind {
+class MarcReplace extends MarcFileToolBase {
 
-    public function replaceAndEchoRaw( string $replace ) {
+    private $mask;
+    private $checker;
+    private $replace = '\0';
+
+    public function __construct( string $marc_file = NULL, MarcMask $mask, string $replace ) {
+        parent::__construct( $marc_file );
+        $this->setMask( $mask );
+        $this->setReplace( $replace );
+    }
+
+    public function setReplace( string $replace ) : self {
+        $this->replace = $replace;
+        return $this;
+    }
+
+    public function setMask( MarcMask $mask ) : self {
+        $this->mask = $mask;
+        $this->checker = new MarcMaskChecker( $mask );
+        return $this;
+    }
+
+    public function replaceAndEchoRaw() {
         while ( TRUE ) {
             try {
-                $record = $this->replaceNext( $replace );
+                $record = $this->replaceNext( $this->replace );
                 echo $record->toRaw();
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
@@ -28,19 +49,20 @@ class MarcReplace extends MarcFind {
         }
     }
 
-    public function replaceAndEchoDump(
-      string $replace, bool $ansi=TRUE, bool $mark_hits = TRUE ) {
+    public function echoDump( bool $ansi=TRUE, bool $mark_hits = TRUE ) {
         $first = TRUE;
+
         if ( $mark_hits ) {
-            $replace = AnsiCodes::negative . $replace . AnsiCodes::reset;
+            $replace = AnsiCodes::negative . $this->replace . AnsiCodes::reset;
         }
+
         while ( TRUE ) {
             try {
 
                 if ( !$first ) { echo self::sep; }
                 $first = FALSE;
 
-                $record = $this->replaceNext( $replace );
+                $record = $this->next( $replace );
                 echo MarcDump::dumpRecord( $record, $ansi );
 
             } catch ( MarcRecordNotFoundException $e ) {
@@ -49,18 +71,23 @@ class MarcReplace extends MarcFind {
         }
     }
 
-    public function replaceNext( string $replace ) : \File_MARC_Record {
-        $record = $this->next();
-        return $this->replace( $record, $replace );
+    public function next() : \File_MARC_Record {
+        while ( $record = $this->marc->next() ) {
+            if ( $this->checker->check( $record ) ) {
+                return $this->replace( $record );
+            }
+        }
+
+        throw new MarcRecordNotFoundException( 'Record not found.' );
     }
 
-    public function replace( \File_MARC_Record $record, string $replace ) {
+    public function replace( \File_MARC_Record $record ) {
         $fields = $this->checker->getMatchingFields( $record );
         foreach ( $fields as $field ) {
             if ( $field->isControlField() ) {
-                $field = $this->replaceControlField( $field, $replace );
+                $field = $this->replaceControlField( $field );
             } else {
-                $field = $this->replaceDataField( $field, $replace);
+                $field = $this->replaceDataField( $field );
             }
         }
 
@@ -68,19 +95,26 @@ class MarcReplace extends MarcFind {
     }
 
     private function replaceControlField(
-      \File_MARC_Control_Field $field, string $replace ) : \File_MARC_Control_Field {
-        $tmp = preg_replace( $this->mask->getRegExp(), $replace, $field->getData() );
+      \File_MARC_Control_Field $field ) : \File_MARC_Control_Field {
+        $tmp = preg_replace( $this->mask->getRegExp(), $this->replace, $field->getData() );
         $field->setData( $tmp );
         return $field;
     }
 
-    private function replaceDataField(
-      \File_MARC_Data_Field $field, string $replace ) : \File_MARC_Data_Field {
+    private function replaceDataField( \File_MARC_Data_Field $field ) : \File_MARC_Data_Field {
         $subfields = $this->checker->getMatchingSubfields( $field );
         foreach ( $subfields as $subfield ) {
-            $tmp = preg_replace( $this->mask->getRegExp(), $replace, $subfield->getData() );
+            $tmp = preg_replace( $this->mask->getRegExp(), $this->replace, $subfield->getData() );
             $subfield->setData( $tmp );
         }
         return $field;
     }
+
+    public function __toString() {
+        ob_start();
+        $this->echoDump();
+        $content = ob_get_clean();
+        return $content;
+    }
+
 }
