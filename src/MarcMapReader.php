@@ -77,7 +77,7 @@ class MarcMapReader {
     /**
      * Get the record with given key (usually the OCLC number).
      *
-     * @param int $oclc
+     * @param string $key
      *   Key (MARC field 001) of record to look for
      * @return File_MARC_Record
      *   Returns the Record
