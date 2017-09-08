@@ -24,7 +24,7 @@ final class MarcMapReaderTest extends TestCase {
 
         // Create reader
         $mr = new MarcMapReader( __DIR__ . '/data/random.mrc', $db );
-        $record = (string) $mr->get( 983796227 );
+        $record = (string) $mr->get( '983796227' )[0];
 
         $this->assertEquals( empty( $record ), FALSE );
         $this->assertNotEquals( FALSE, strpos( $record, 'Clostridium difficile on U.S. beef cow-calf operations.' ) );
