@@ -16,7 +16,10 @@ $mm = ( new MarcMapWriter( $marc_file, $db ) )->map();
 
 $mr = new MarcMapReader( $marc_file, $db );
 try {
-    echo MarcDump::formatDump( (string) $mr->get( 983796227 ) );
+    $records = $mr->get( 'OCM1bookssib026558126' );
+    foreach ( $records as $record ) {
+        echo MarcDump::formatDump( (string) $record );
+    }
 } catch ( MarcRecordNotFoundException $e ) {
     echo "Record not found.\n";
 }

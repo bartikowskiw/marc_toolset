@@ -30,7 +30,7 @@ class MarcMapWriter {
         DROP TABLE IF EXISTS `record`;
         CREATE TABLE IF NOT EXISTS `record` (
             `id` integer PRIMARY KEY,
-            `oclc` integer,
+            `key` integer,
             `fpos` integer
         )
     ';
@@ -40,12 +40,6 @@ class MarcMapWriter {
      * @var File_MARC
      */
     private $marc;
-
-    /**
-     * Counts records with invalid OCLC numbers (= MARC field 001)
-     * @var int
-     */
-    private $invalid_oclc = 0;
 
     /**
      * Counts the number of mapped records
@@ -117,7 +111,7 @@ class MarcMapWriter {
      *   Returns this object
      */
     private function index() {
-        $this->db->exec( 'CREATE INDEX IF NOT EXISTS `oclc` ON record( `oclc` );' );
+        $this->db->exec( 'CREATE INDEX IF NOT EXISTS `key` ON record( `key` );' );
         return $this;
     }
 
@@ -137,22 +131,14 @@ class MarcMapWriter {
 
         // Create prepared statement
         $stmt = $this->db->prepare( '
-            INSERT OR REPLACE INTO record ( oclc, fpos ) VALUES ( :oclc, :fpos )
+            INSERT OR REPLACE INTO record ( key, fpos ) VALUES ( :key, :fpos )
         ' );
 
         while( $record = $this->marc->next() ) {
 
-            // Check if an id is given in MARC 001. If not, skip record.
-            if ( empty( $record->getField( '001' ) ) ) {
-                $this->invalid_oclc++;
-                continue;
-            }
+            $key = $record->getField( '001' )->getData();
 
-            // Parse only the digits of the OCLC number
-            preg_match( '/(?P<oclc>[0-9]+)$/', $record->getField( '001' )->getData(), $result );
-            $oclc = empty( $result['oclc'] ) ? -1 : $result['oclc'];
-
-            $stmt->bindValue( ':oclc', $oclc, SQLITE3_INTEGER );
+            $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
             $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
             $stmt->execute()->finalize();
 
