@@ -75,6 +75,30 @@ class MarcMapReader {
     }
 
     /**
+     * Read a record out of the MARC file.
+     *
+     * Move the file pointer, read the length of the record and return
+     * a File_MARC_Record object.
+     *
+     * @var resource $fp
+     *   Open file pointer to the MARC file
+     * @var int $fpos
+     * @return File_MARC_Record
+     */
+    public static function readRecord( $fp, int $fpos ) : \File_MARC_Record {
+
+        fseek( $fp, $fpos );
+
+        $len = intval( fread( $fp, 5 ) );
+        fseek( $fp, -5, SEEK_CUR );
+        $marc_binary = fread( $fp, $len );
+
+        $marc = new \File_MARC( $marc_binary, \File_MARC::SOURCE_STRING );
+
+        return $marc->next();
+    }
+
+    /**
      * Get the record with given key (usually the OCLC number).
      *
      * @param string $key
@@ -94,16 +118,8 @@ class MarcMapReader {
         }
 
         $fp = fopen( $this->marc_file, 'r' );
-
         foreach ( $infos as $info ) {
-            fseek( $fp, $info['fpos'] );
-
-            $len = intval( fread( $fp, 5 ) );
-            fseek( $fp, -5, SEEK_CUR );
-            $marc_binary = fread( $fp, $len );
-
-            $marc = new \File_MARC( $marc_binary, \File_MARC::SOURCE_STRING );
-            $records[] = $marc->next();
+            $records[] = $this->readRecord( $fp, $info['fpos'] );
         }
 
         return $records;
