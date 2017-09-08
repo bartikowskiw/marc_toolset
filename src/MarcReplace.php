@@ -54,7 +54,7 @@ class MarcReplace extends MarcFileToolBase {
 
         $replace = $this->replace;
         if ( $ansi && $mark_hits ) {
-            $this->setReplace( AnsiCodes::negative . $this->replace . AnsiCodes::reset );
+            $this->setReplace( AnsiCodes::negative . $replace . AnsiCodes::reset );
         }
 
         while ( TRUE ) {
