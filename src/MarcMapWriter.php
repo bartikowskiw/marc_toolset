@@ -136,7 +136,12 @@ class MarcMapWriter {
 
         while( $record = $this->marc->next() ) {
 
-            $key = $record->getField( '001' )->getData();
+            // Default value for the case the 001 field is empty
+            $key = -1;
+
+            if ( !empty( $record->getField( '001' ) ) ) {
+                $key = $record->getField( '001' )->getData();
+            }
 
             $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
             $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
