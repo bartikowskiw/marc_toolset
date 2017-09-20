@@ -37,10 +37,19 @@ class MarcMaskChecker {
      */
     public function check( \File_MARC_Record $record ) : bool {
         $fields = $this->getMatchingFields( $record );
-        if ( empty( $fields ) ) { return FALSE; }
-        foreach ( $fields as $field ) {
-            if ( $this->checkField( $field ) ) { return TRUE; }
+
+        if ( !empty( $fields ) ) {
+
+            // Check fields
+            foreach ( $fields as $field ) {
+                if ( $this->checkField( $field ) ) { return TRUE; }
+            }
+
         }
+
+        // Check the leader too
+        if ( $this->leaderMatches( $record ) && $this->checkLeader( $record ) ) { return TRUE; }
+
         return FALSE;
     }
 
@@ -93,6 +102,19 @@ class MarcMaskChecker {
             }
         }
         return $matching;
+    }
+
+    /**
+     * Checks if the Tag regexp matches the leader.
+     *
+     * @param File_MARC_Field
+     * @return bool
+     *   Returns if the field matches the mask.
+     */
+    public function leaderMatches( \File_MARC_Record $record ) : bool {
+        return
+            ( preg_match( '/' . $this->mask->getTag() . '/i', 'LDR' ) > 0 )
+            || ( preg_match( '/' . $this->mask->getTag() . '/i', 'LEADER' ) > 0 );
     }
 
     /**
@@ -151,6 +173,17 @@ class MarcMaskChecker {
     }
 
     /**
+     * Checks if the one of the MARC subfields match the MarcMask.
+     *
+     * @param File_MARC_Record $record
+     * @return bool
+     *   Returns if the Leader matches the mask.
+     */
+    public function checkLeader( \File_MARC_Record $record ) {
+        return preg_match( $this->mask->getRegexp(), $record->getLeader() ) > 0;
+    }
+
+    /**
      * Marks the matching parts of a MARC record. Uses ANSI coloring.
      * Notice: Changes the actual record - be careful when saving.
      *
@@ -158,6 +191,11 @@ class MarcMaskChecker {
      * @return File_MARC_Record
      */
     public function markMatching( \File_MARC_Record $record ) : \File_MARC_Record {
+
+        if ( $this->leaderMatches( $record ) ) {
+            $record =  $this->markLeader( $record );
+        }
+
         $fields = $record->getFields( $this->mask->getTag(), TRUE );
         if ( empty( $fields ) ) { return $record; }
         foreach ( $fields as $field ) {
@@ -174,6 +212,7 @@ class MarcMaskChecker {
                 }
             }
         }
+
         return $record;
     }
 
@@ -185,13 +224,36 @@ class MarcMaskChecker {
      */
     private function markElement( $el ) {
         $data = $el->getData();
-        $data = preg_replace(
-            $this->mask->getRegexp(),
-            AnsiCodes::negative . '\0'  . AnsiCodes::reset,
-            $data
-        );
+        $data = $this->markString( $data );
         $el->setData( $data );
         return $el;
+    }
+
+    /**
+     * Marks matching part of a record Leader.
+     *
+     * @param File_MARC_Record $record
+     * @return File_MARC_Record
+     */
+    private function markLeader( \File_MARC_Record $record ) : \File_MARC_Record {
+        $leader = $record->getLeader();
+        $leader = $this->markString( $leader );
+        $record->setLeader( $leader );
+        return $record;
+    }
+
+    /**
+     * Marks matching part of a string.
+     *
+     * @param string $string
+     * @return string
+     */
+    private function markString( string $string ) : string {
+        return preg_replace(
+            $this->mask->getRegexp(),
+            AnsiCodes::negative . '\0'  . AnsiCodes::reset,
+            $string
+        );
     }
 
 }
