@@ -152,7 +152,7 @@ class MarcMask {
      *   Returns the PCRE for the fields. Includes delimiter and
      *   flags!
      */
-    public function getRegexp() { return $this->regexp; }
+    public function getRegexp() : string { return $this->regexp; }
 
     /**
      * @var bool $invert
