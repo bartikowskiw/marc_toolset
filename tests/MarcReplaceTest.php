@@ -35,4 +35,15 @@ final class MarcReplaceTest extends TestCase {
         $this->assertNotEquals( false, strpos( $content, 'pork' ) );
     }
 
+    public function testLeaderReplace() {
+        $mr = new MarcReplace(
+            __DIR__ . '/data/random.mrc',
+            new MarcMask( 'leader', '.', '.', '.', '(..834c2)(m)' ),
+            '\1@'
+        );
+
+        $record = $mr->next();
+        $this->assertEquals( 7, strpos( $record->getLeader(), '@' ) );
+    }
+
 }
