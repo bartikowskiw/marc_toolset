@@ -33,6 +33,13 @@ class MarcMask {
      */
     private $regexp;
 
+
+    /**
+     * @var bool
+     *   Saves if checking for the mask should be inverted.
+     */
+    private $invert = false;
+
     /**
      * Constructor.
      *
@@ -146,5 +153,21 @@ class MarcMask {
      *   flags!
      */
     public function getRegexp() { return $this->regexp; }
+
+    /**
+     * @var bool $invert
+     * @return self
+     */
+    public function setInvert( bool $invert ) : self {
+        $this->invert = $invert;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInvert() : bool {
+        return $this->invert;
+    }
 
 }
