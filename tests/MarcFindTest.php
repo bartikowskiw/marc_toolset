@@ -25,4 +25,13 @@ final class MarcFindTest extends TestCase {
         $this->assertNotEquals( false, strpos( $content, '983796227' ) );
     }
 
+    public function testLeaderFind() {
+        $records = new MarcFind( __DIR__ . '/data/random.mrc', new MarcMask( 'ldr', '.', '.', '.', '834c2m' ) );
+
+        $this->assertEquals( true, !empty( $records ) );
+
+        $record = $records->next();
+        $this->assertEquals( 2, strpos( $record->getLeader(), '834c2m' ) );
+    }
+
 }
