@@ -96,6 +96,10 @@ class MarcReplace extends MarcFileToolBase {
             }
         }
 
+        if ( $this->checker->leaderMatches( $record ) ) {
+            $record = $this->replaceLeader( $record );
+        }
+
         return $record;
     }
 
@@ -113,6 +117,13 @@ class MarcReplace extends MarcFileToolBase {
             $subfield->setData( $tmp );
         }
         return $field;
+    }
+
+    private function replaceLeader( \File_MARC_Record $record ) : \File_MARC_Record {
+        $leader = $record->getLeader();
+        $leader = preg_replace( $this->mask->getRegExp(), $this->replace, $leader );
+        $record->setLeader( $leader );
+        return $record;
     }
 
     public function __toString() {

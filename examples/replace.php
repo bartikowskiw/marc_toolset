@@ -13,3 +13,7 @@ $marc_file = __DIR__ . '/../data/random.mrc';
 $records = new MarcReplace( $marc_file, new MarcMask( '...', '.', '.', '.', 'beef' ), 'pork' );
 echo $records;
 echo "\n";
+
+$records = new MarcReplace( $marc_file, new MarcMask( 'ldr', '.', '.', '.', '(.{5})c' ), '\1@' );
+echo $records;
+echo "\n";
