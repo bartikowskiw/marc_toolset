@@ -41,7 +41,7 @@ class MarcReplace extends MarcFileToolBase {
     public function echoRaw() {
         while ( TRUE ) {
             try {
-                $record = $this->replaceNext( $this->replace );
+                $record = $this->next();
                 echo $record->toRaw();
             } catch ( MarcRecordNotFoundException $e ) {
                 break;
