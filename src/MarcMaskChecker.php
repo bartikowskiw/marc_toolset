@@ -31,11 +31,28 @@ class MarcMaskChecker {
     /**
      * Checks if the MARC record matches the MarcMask.
      *
+     * This function takes the invert-flag of the Mask
+     * object into account.
+     *
+     * @param File_MARC_Record $record
+     * @return bool
+     *   Returns if MARC record matches the MarcMask.
+     */
+    public function check( \File_MARC_Record $record ) : bool {
+        if ( $this->mask->getInvert() ) {
+            return !$this->_check( $record );
+        }
+        return $this->_check( $record );
+    }
+
+    /**
+     * Helper method so invert flag can be appied easier.
+     *
      * @param File_MARC_Record $record
      * @return bool
      *   Returns if MARC record matches the MarcMask
      */
-    public function check( \File_MARC_Record $record ) : bool {
+    private function _check( \File_MARC_Record $record ) : bool {
         $fields = $this->getMatchingFields( $record );
 
         if ( !empty( $fields ) ) {

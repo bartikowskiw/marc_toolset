@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Umlts\MarcToolset\MarcFind;
 use Umlts\MarcToolset\MarcMask;
 use Umlts\MarcToolset\MarcMaskChecker;
+use Umlts\MarcToolset\MarcRecordNotFoundException;
 
 /**
  * @covers Umlts\MarcToolset\MarcFind
@@ -32,6 +33,26 @@ final class MarcFindTest extends TestCase {
 
         $record = $records->next();
         $this->assertEquals( 2, strpos( $record->getLeader(), '834c2m' ) );
+    }
+
+    public function testInvertFind() {
+
+        $records = new MarcFind(
+            __DIR__ . '/data/random.mrc',
+            ( new MarcMask( '003', '.', '.', '.', 'OCoLC' ) )->setInvert( TRUE )
+        );
+
+        while ( TRUE ) {
+            try {
+                $record = $records->next();
+                if ( TRUE == $field = $record->getField( '003' ) ) {
+                    $this->assertNotEquals( 'OCoLC', $field->getData() );
+                }
+            } catch ( MarcRecordNotFoundException $e ) {
+                break;
+            }
+        }
+
     }
 
 }
