@@ -30,7 +30,7 @@ class MarcMapWriter {
         DROP TABLE IF EXISTS `record`;
         CREATE TABLE IF NOT EXISTS `record` (
             `id` integer PRIMARY KEY,
-            `key` integer,
+            `key` string,
             `fpos` integer
         )
     ';
