@@ -111,7 +111,7 @@ class MarcMapWriter {
      *   Returns this object
      */
     private function index() {
-        $this->db->exec( 'CREATE INDEX IF NOT EXISTS `key` ON record( `key` );' );
+        $this->db->exec( 'CREATE INDEX IF NOT EXISTS `key_' . uniqid() . '` ON record( `key` );' );
         return $this;
     }
 
