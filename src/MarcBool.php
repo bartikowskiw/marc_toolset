@@ -60,6 +60,25 @@ class MarcBool extends MarcFileToolBase {
         return $records;
     }
 
+    public function boolNot() {
+        $stmt = $this->db->prepare(
+            'SELECT r1.key, r1.fpos
+                FROM record1 AS r1
+                WHERE (
+                    SELECT COUNT(*) FROM record2 AS r2 WHERE r2.key = r1.key
+                ) = 0
+            '
+        );
+        $result = $stmt->execute();
+
+        $fp = fopen( $this->marc_file1, 'r' );
+        while( $data = $result->fetchArray( SQLITE3_ASSOC ) ) {
+            $records[] = MarcMapReader::readRecord( $fp, $data['fpos'] );
+        }
+
+        return $records;
+    }
+
 }
 
 
