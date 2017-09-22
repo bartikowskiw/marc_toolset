@@ -11,5 +11,9 @@ $marc_file1 = __DIR__ . '/../data/random.mrc';
 $marc_file2 = __DIR__ . '/../data/random2.mrc';
 
 $b = new MarcBool( $marc_file1, $marc_file2 );
-$records = $b->boolAnd();
-foreach ( $records AS $record ) { echo $record->toRaw(); }
+$b->boolNot()->echoDump();
+
+echo "-----------\n";
+
+$b = new MarcBool( $marc_file1, $marc_file2 );
+$b->boolAnd()->echoDump();
