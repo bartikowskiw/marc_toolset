@@ -47,6 +47,10 @@ class MarcBool extends MarcFileToolBase {
         $this->fp = fopen( $this->marc_file1, 'r' );
     }
 
+    public function __destruct() {
+        fclose( $this->fp );
+    }
+
     public function boolAnd() : self {
         $stmt = $this->db->prepare(
             'SELECT r1.key, r1.fpos
