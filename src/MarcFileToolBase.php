@@ -80,11 +80,19 @@ class MarcFileToolBase {
         return $this;
     }
 
-    protected final function staticCall() {
+    /**
+     * @return bool
+     *   Returns if method has been called statically
+     */
+    protected final function staticCall() : bool {
         return !isset( $this );
     }
 
-
+    /**
+     * Opens the MARC file for further usage.
+     *
+     * @param string $marc_file
+     */
     protected final function getMarc( string $marc_file ) {
 
         if ( self::staticCall() ) {                                    // Static call
