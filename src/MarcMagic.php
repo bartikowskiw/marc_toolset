@@ -69,7 +69,7 @@ class MarcMagic {
         ];
         $p56 = implode( '|', $regexp );
 
-        return preg_match( "/^\d{5}$p56..[ a]22\d{5}...4500/", $leader ) === 1;
+        return preg_match( "/^\d{5}($p56)..[ a]22\d{5}...4500$/", $leader ) === 1;
     }
 
     /**
@@ -86,7 +86,9 @@ class MarcMagic {
             if ( empty( $marc_file ) ) {
                 throw new \InvalidArgumentException( 'No MARC file given.' );
             }
-            self::checkFile( $marc_file );
+            if ( self::checkFile( $marc_file ) === FALSE ) {
+                throw new \InvalidArgumentException( 'Invalid file: ' .  $marc_file );
+            }
         } else {
             if ( empty( $marc_file ) ) { $marc_file = $this->marc_file; }
         }
