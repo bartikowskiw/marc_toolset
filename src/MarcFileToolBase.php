@@ -51,8 +51,11 @@ class MarcFileToolBase {
             $marc_file = $this->marc_file;
         }
 
-        // Check if file is an actual MARC file
-        if ( MarcMagic::check( $marc_file ) === FALSE ) {
+        // Check if file is an actual MARC file, this works just
+        // with actual files. Input from STDIN can't be checked
+        // this way because there is no way to go back in the stream's
+        // content.
+        if ( is_file( $marc_file ) && MarcMagic::check( $marc_file ) === FALSE ) {
             throw new \InvalidArgumentException( 'Not a valid MARC file "' . $marc_file . '".' );
         }
 

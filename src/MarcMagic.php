@@ -44,10 +44,6 @@ class MarcMagic {
      */
     protected final function checkFile( string $marc_file ) : bool {
         $fi = new \SplFileInfo( $marc_file );
-
-        // Returns always TRUE for i.e. Streams
-        if ( !$fi->isFile() ) { return TRUE; }
-
         return $fi->isFile() && $fi->isReadable();
     }
 
