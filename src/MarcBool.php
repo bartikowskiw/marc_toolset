@@ -125,38 +125,3 @@ class MarcBool extends MarcFileToolBase {
     }
 
 }
-
-
-/*
-
---- JOIN ALL
-
-SELECT key FROM record1
-UNION
-SELECT key FROM record2
-
---- INTERSECTING:
-
-SELECT
-	r1.key
-FROM record1 AS r1
-JOIN record2 AS r2 USING (key)
-
---- NOT INTERSECTING:
-
-SELECT key FROM record1
-UNION
-SELECT key FROM record2
-
-EXCEPT
-
-SELECT key FROM record1
-INNER JOIN record2 USING (key)
-
---- A WITHOUT B
-
-SELECT r1.key FROM record1 AS r1
-EXCEPT SELECT r2.key FROM record2 AS r2
-
-
-*/
