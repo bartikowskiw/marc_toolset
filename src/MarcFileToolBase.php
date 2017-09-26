@@ -5,6 +5,7 @@ declare( strict_types = 1 );
 namespace Umlts\MarcToolset;
 
 use File\MARC;
+use Umlts\MarcToolset\MarcMagic;
 
 /**
  * Base for MARC file based tools classes.
@@ -48,6 +49,11 @@ class MarcFileToolBase {
 
         if ( empty( $marc_file ) && isset( $this ) ) {
             $marc_file = $this->marc_file;
+        }
+
+        // Check if file is an actual MARC file
+        if ( MarcMagic::check( $marc_file ) === FALSE ) {
+            throw new \InvalidArgumentException( 'Not a valid MARC file "' . $marc_file . '".' );
         }
 
         // Open MARC source file
