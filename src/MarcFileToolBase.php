@@ -48,7 +48,7 @@ class MarcFileToolBase {
     protected function initMarc( string $marc_file = '' ) : \File_MARC {
 
         if ( empty( $marc_file ) && isset( $this ) ) {
-            $marc_file = $this->marc_file;
+            $marc_file = $this->marc_file;git
         }
 
         // Check if file is an actual MARC file
