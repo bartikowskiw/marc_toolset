@@ -62,7 +62,10 @@ class MarcMagic {
     public final function checkLeader( string $leader ) : bool {
         $regexp = [
             'authority' => '[acdnosx][z]',
-            'bib' => '[acdnp][acdefgijkmoprt]',
+            //'bib' => '[acdnp][acdefgijkmoprt]',
+            // Laxer bib level check.
+            // Libraries may define their own levels
+            'bib' => '[acdnp][a-z0-9-]',
             'classification' => '[acdn][w]',
             'community' => '[cdn][q]',
             'holding' => '[cdn][uvxy]',
