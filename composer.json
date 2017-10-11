@@ -14,12 +14,6 @@
             "Umlts\\MarcToolset\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://vcs.missouri.edu/umlts/composer_repository/raw/master/packages.json"
-        }
-    ],
     "require": {
         "pear/file_marc": "^1.1",
         "pear/Validate_ISPN": "dev-master",
