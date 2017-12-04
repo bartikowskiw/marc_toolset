@@ -46,7 +46,7 @@ class MarcMaskChecker {
     }
 
     /**
-     * Helper method so invert flag can be appied easier.
+     * Helper method so invert flag can be applied easier.
      *
      * @param File_MARC_Record $record
      * @return bool
