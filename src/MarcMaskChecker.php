@@ -111,14 +111,7 @@ class MarcMaskChecker {
      *   Returns array of matching File_MARC_Subfield object
      */
     public function getMatchingSubfields( \File_MARC_Field $field ) : array {
-        $matching = [];
-        $subfields = $field->getSubfields();
-        foreach ( $subfields as $subfield ) {
-            if ( preg_match( '/' . $this->mask->getSubfield() . '/i', $subfield->getCode() ) ) {
-                $matching[] = $subfield;
-            }
-        }
-        return $matching;
+        return $field->getSubfields( $this->mask->getSubfield(), TRUE );
     }
 
     /**
