@@ -44,9 +44,7 @@ class customKeyCreator implements MarcMapKeyCreator {
 }
 
 $db = new SQLite3( ':memory:' );
-$mm = ( new MarcMapWriter( $marc_file, $db ) )
-        ->setKeyCreator( new customKeyCreator() )
-        ->map();
+$mm = ( new MarcMapWriter( $marc_file, $db, new customKeyCreator() ) )->map();
 $mr = new MarcMapReader( $marc_file, $db );
 
 try {
