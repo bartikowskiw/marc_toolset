@@ -54,7 +54,7 @@ class MarcBool extends MarcFileToolBase {
 
     public function boolAnd() : self {
         $stmt = $this->db->prepare(
-            'SELECT r1.key, r1.fpos
+            'SELECT DISTINCT r1.fpos
                 FROM record1 AS r1
                 JOIN record2 AS r2
                 WHERE ( r1.key = r2.key )
@@ -66,7 +66,7 @@ class MarcBool extends MarcFileToolBase {
 
     public function boolNot() {
         $stmt = $this->db->prepare(
-            'SELECT r1.key, r1.fpos
+            'SELECT DISTINCT r1.fpos
                 FROM record1 AS r1
                 WHERE (
                     SELECT COUNT(*) FROM record2 AS r2 WHERE r2.key = r1.key

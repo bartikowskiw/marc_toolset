@@ -44,7 +44,7 @@ class MarcDuplicates extends MarcFileToolBase {
     public function findDuplicates() : self {
 
         $stmt = $this->db->prepare(
-            'SELECT r1.key, r1.fpos FROM record AS r1
+            'SELECT DISTINCT r1.fpos FROM record AS r1
                 WHERE (
                     SELECT 1 FROM record AS r2
                     WHERE r1.key = r2.key LIMIT 1, 1
