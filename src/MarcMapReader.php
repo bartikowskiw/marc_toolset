@@ -62,7 +62,7 @@ class MarcMapReader {
      */
     private function query( string $key ) : array {
 
-        $records = array();
+        $infos = [];
 
         $stmt = $this->db->prepare( 'SELECT * FROM record WHERE key=:key' );
         $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
