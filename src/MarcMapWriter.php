@@ -85,7 +85,7 @@ class MarcMapWriter {
      * @param MarcMapKeyCreator $key_creator
      * #return self
      */
-    public function setMapper( MarcMapKeyCreator $key_creator ) : self {
+    public function setKeyCreator( MarcMapKeyCreator $key_creator ) : self {
         $this->key_creator = $key_creator;
         return $this;
     }
@@ -153,7 +153,7 @@ class MarcMapWriter {
 
         while( $record = $this->marc->next() ) {
             
-            if ( empty( $this->mapper ) ) {
+            if ( empty( $this->key_creator ) ) {
                 $keys = MarcMapDefaultKeyCreator::getKeys( $record );
             } else {
                 $keys = $this->key_creator->getKeys( $record );
