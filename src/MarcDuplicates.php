@@ -22,7 +22,7 @@ class MarcDuplicates extends MarcFileToolBase {
 
     private $result;
 
-    public function __construct( string $marc_file ) {
+    public function __construct( string $marc_file, MarcMapKeyCreator $key_creator = NULL ) {
 
         parent::__construct();
 
@@ -32,7 +32,7 @@ class MarcDuplicates extends MarcFileToolBase {
         $this->marc_file = $marc_file;
         $this->marc = $this->initMarc( $marc_file );
 
-        ( new MarcMapWriter( $marc_file, $this->db ) )->map();
+        $mw = ( new MarcMapWriter( $marc_file, $this->db, $key_creator ) )->map();
 
         $this->fp = fopen( $this->marc_file, 'r' );
     }
