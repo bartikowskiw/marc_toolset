@@ -159,11 +159,13 @@ class MarcMapWriter {
                 $keys = $this->key_creator->getKeys( $record );
             }
 
-            foreach ( $keys as $key ) {
-                $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
-                $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
-                $stmt->execute()->finalize();
-            }             
+            if ( !empty( $keys ) ) {
+                foreach ( $keys as $key ) {
+                    $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
+                    $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
+                    $stmt->execute()->finalize();
+                }
+            } 
 
             // Save the file pointer position for the next run
             $fpos = $this->marc->ftell();
