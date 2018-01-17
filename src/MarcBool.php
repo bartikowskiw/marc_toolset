@@ -9,6 +9,7 @@ use Umlts\MarcToolset\AnsiCodes;
 use Umlts\MarcToolset\MarcFileToolBase;
 use Umlts\MarcToolset\MarcDump;
 use Umlts\MarcToolset\MarcRecordNotFoundException;
+use Umlts\MarcToolset\MarcMapKeyCreator;
 
 /**
  * Looks for records
@@ -25,7 +26,7 @@ class MarcBool extends MarcFileToolBase {
 
     private $result;
 
-    public function __construct( string $marc_file1, string $marc_file2 ) {
+    public function __construct( string $marc_file1, string $marc_file2, MarcMapKeyCreator $key_creator = NULL ) {
 
         parent::__construct();
 
@@ -38,10 +39,10 @@ class MarcBool extends MarcFileToolBase {
         $this->marc1 = $this->initMarc( $marc_file1 );
         $this->marc2 = $this->initMarc( $marc_file2 );
 
-        ( new MarcMapWriter( $marc_file1, $this->db ) )->map();
+        ( new MarcMapWriter( $marc_file1, $this->db, $key_creator ) )->map();
         $this->db->exec( 'ALTER TABLE `record` RENAME TO `record1`' );
 
-        ( new MarcMapWriter( $marc_file2, $this->db ) )->map();
+        ( new MarcMapWriter( $marc_file2, $this->db, $key_creator ) )->map();
         $this->db->exec( 'ALTER TABLE `record` RENAME TO `record2`' );
 
         $this->fp = fopen( $this->marc_file1, 'r' );
