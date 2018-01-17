@@ -32,7 +32,6 @@ try {
 class customKeyCreator implements MarcMapKeyCreator {
     
     static function getKeys( \File_MARC_Record $record ) : array {
-        // Default value for the case the 001 field is empty
         if ( empty( $record->getField( '245' ) ) ) { return [ -1 ]; }
         
         $keys = [];
