@@ -8,6 +8,7 @@ use Umlts\MarcToolset\MarcMapWriter;
 use Umlts\MarcToolset\MarcMapReader;
 use Umlts\MarcToolset\MarcDump;
 use Umlts\MarcToolset\MarcRecordNotFoundException;
+use Umlts\MarcToolset\MarcMapMapper;
 
 $marc_file = __DIR__ . '/../data/random.mrc';
 
