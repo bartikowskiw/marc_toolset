@@ -61,8 +61,14 @@ class MarcMapWriter {
      *   Path to the MARC file
      * @param SQLite3 $db
      *   SQLite3 DB object
+     * @param MarcMapKeyCreator $key_creator
+     *   A custom MarcMapKeyCreator
      */
-    public function __construct( string $marc_file, \SQLite3 $db ) {
+    public function __construct(
+        string $marc_file, 
+        \SQLite3 $db, 
+        MarcMapKeyCreator $key_creator = NULL
+    ) {
         $this->db = $db;
 
         // Create table if necessary
@@ -78,6 +84,8 @@ class MarcMapWriter {
                 throw $e;
             }
         }
+        
+        if ( !empty( $key_creator ) ) { $this->setKeyCreator( $key_creator ); }
     }
     
     /**
