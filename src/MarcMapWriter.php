@@ -6,6 +6,7 @@ namespace Umlts\MarcToolset;
 
 use File\MARC;
 use Umlts\MarcToolset\FileMarcWrapper;
+use Umlts\MarcToolset\MarcKeyCreator;
 
 /**
  * Creates a SQLite database mapping the file position
@@ -46,6 +47,12 @@ class MarcMapWriter {
      * @var int
      */
     private $records_mapped = 0;
+    
+    /**
+     * Class creating the keys
+     * @var MarcMapKeyCreator
+     */
+    private $key_creator;
 
     /**
      * Constructs object
@@ -71,6 +78,16 @@ class MarcMapWriter {
                 throw $e;
             }
         }
+    }
+    
+    /**
+     * Sets the mapper that creates the keys
+     * @param MarcMapKeyCreator $key_creator
+     * #return self
+     */
+    public function setMapper( MarcMapKeyCreator $key_creator ) : self {
+        $this->key_creator = $key_creator;
+        return $this;
     }
 
     /**
@@ -135,17 +152,18 @@ class MarcMapWriter {
         ' );
 
         while( $record = $this->marc->next() ) {
-
-            // Default value for the case the 001 field is empty
-            $key = -1;
-
-            if ( !empty( $record->getField( '001' ) ) ) {
-                $key = $record->getField( '001' )->getData();
+            
+            if ( empty( $this->mapper ) ) {
+                $keys = MarcMapDefaultKeyCreator::getKeys( $record );
+            } else {
+                $keys = $this->key_creator->getKeys( $record );
             }
 
-            $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
-            $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
-            $stmt->execute()->finalize();
+            foreach ( $keys as $key ) {
+                $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
+                $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
+                $stmt->execute()->finalize();
+            }             
 
             // Save the file pointer position for the next run
             $fpos = $this->marc->ftell();
