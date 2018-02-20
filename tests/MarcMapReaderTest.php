@@ -28,6 +28,12 @@ final class MarcMapReaderTest extends TestCase {
 
         $this->assertEquals( empty( $record ), FALSE );
         $this->assertNotEquals( FALSE, strpos( $record, 'Clostridium difficile on U.S. beef cow-calf operations.' ) );
+
+        // Check regexp
+        $record = (string) $mr->get( '983.96227$', true )[0];
+
+        $this->assertEquals( empty( $record ), FALSE );
+        $this->assertNotEquals( FALSE, strpos( $record, 'Clostridium difficile on U.S. beef cow-calf operations.' ) );
     }
 
 }

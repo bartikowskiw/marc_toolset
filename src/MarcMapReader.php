@@ -37,6 +37,7 @@ class MarcMapReader {
     function __construct( string $marc_file, \SQLite3 $db ) {
 
         $this->db = $db;
+        $this->addRegexpToSqlite();
 
         // Open MARC source file
         if ( !is_file( $marc_file ) ) {
@@ -50,21 +51,48 @@ class MarcMapReader {
     }
 
     /**
+     * Add PREG_MATCH function to the DB
+     *
+     * @return void
+     */
+    function addRegexpToSqlite() {
+        $this->db->createFunction(
+            'PREG_MATCH',
+            function ( string $regexp, string $string ) : bool {
+                return preg_match( '/' . $regexp . '/i', $string ) === 1;
+            },
+            2,
+            \PDO::SQLITE_DETERMINISTIC
+        );
+    }
+
+    /**
      * Query the DB for the record.
      * This query assumes that there is only one record with this
      * OCLC number. However, if there are more then just the first one
      * in the results will be returned.
      *
      * @param string $key
-     *   Key (MARC field 001) of record to look for (usually the OCLC)
+     *   Key (MARC field 001) of record to look for (usually the OCLC).
+     * @param bool $regexp
+     *   $key is a regular expression
      * @return array
      *   Returns the row. Empty if no match found.
      */
-    private function query( string $key ) : array {
+    private function query( string $key, bool $regexp = false ) : array {
 
         $infos = [];
-
-        $stmt = $this->db->prepare( 'SELECT * FROM record WHERE key=:key' );
+        
+        if ( $regexp ) {
+            $stmt = $this->db->prepare(
+                'SELECT * FROM record WHERE PREG_MATCH( :key, key )'
+            );
+        } else {
+            $stmt = $this->db->prepare(
+                'SELECT * FROM record WHERE key=:key'
+            );
+        }
+        
         $stmt->bindValue( ':key', $key, SQLITE3_TEXT );
         $result = $stmt->execute();
 
@@ -116,16 +144,18 @@ class MarcMapReader {
      *
      * @param string $key
      *   Key (MARC field 001) of record to look for
+     * @param bool $regexp
+     *   $key is a regular expression
      * @return File_MARC_Record
      *   Returns the Record
      * @throws MarcRecordNotFoundException
      *   If no match found
      */
-    public function get( string $key ) : array {
+    public function get( string $key, bool $regexp = false ) : array {
 
         $records = [];
 
-        $infos = $this->query( $key );
+        $infos = $this->query( $key, $regexp );
         if ( empty( $infos ) ) {
             throw new MarcRecordNotFoundException( 'Record #' . $key . ' not found.'  );
         }
