@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cc9eecdaf98fe74e0d6242f3ccf09450",
+    "content-hash": "ef4e059211a456383091b3c52c9f663b",
     "packages": [
         {
             "name": "pear/file_marc",
@@ -226,6 +226,34 @@
             ],
             "description": "More info available on: http://pear.php.net/package/Validate_ISPN",
             "time": "2015-04-14T04:17:31+00:00"
+        },
+        {
+            "name": "umlts/marc_reader",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bartikowskiw/marc_reader",
+                "reference": "9a8fc0f6bbfdd393c4af35ea17da96ea60735b2f"
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Umlts\\MarcReader\\": "src/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "bartikowskiw",
+                    "email": "bartikowskiw@missouri.edu"
+                }
+            ],
+            "time": "2018-08-15T16:43:23+00:00"
         }
     ],
     "packages-dev": [
@@ -1691,7 +1719,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "pear/validate_ispn": 20
+        "pear/validate_ispn": 20,
+        "umlts/marc_reader": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -47,7 +47,7 @@ class MarcMapWriter {
      * @var int
      */
     private $records_mapped = 0;
-    
+
     /**
      * Class creating the keys
      * @var MarcMapKeyCreator
@@ -65,8 +65,8 @@ class MarcMapWriter {
      *   A custom MarcMapKeyCreator
      */
     public function __construct(
-        string $marc_file, 
-        \SQLite3 $db, 
+        string $marc_file,
+        \SQLite3 $db,
         MarcMapKeyCreator $key_creator = NULL
     ) {
         $this->db = $db;
@@ -84,10 +84,10 @@ class MarcMapWriter {
                 throw $e;
             }
         }
-        
+
         if ( !empty( $key_creator ) ) { $this->setKeyCreator( $key_creator ); }
     }
-    
+
     /**
      * Sets the mapper that creates the keys
      * @param MarcMapKeyCreator $key_creator
@@ -159,12 +159,12 @@ class MarcMapWriter {
             INSERT OR REPLACE INTO record ( key, fpos ) VALUES ( :key, :fpos )
         ' );
 
-        while( $record = $this->marc->next() ) {
-            
+        while ( $raw_record = $this->marc->nextRaw() ) {
+
             if ( empty( $this->key_creator ) ) {
-                $keys = MarcMapDefaultKeyCreator::getKeys( $record );
+                $keys = MarcMapDefaultKeyCreator::getKeys( $raw_record );
             } else {
-                $keys = $this->key_creator->getKeys( $record );
+                $keys = $this->key_creator->getKeys( $raw_record );
             }
 
             if ( !empty( $keys ) ) {
@@ -173,7 +173,7 @@ class MarcMapWriter {
                     $stmt->bindValue( ':fpos', $fpos, SQLITE3_INTEGER );
                     $stmt->execute()->finalize();
                 }
-            } 
+            }
 
             // Save the file pointer position for the next run
             $fpos = $this->marc->ftell();

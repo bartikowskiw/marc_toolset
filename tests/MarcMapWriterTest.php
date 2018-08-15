@@ -3,12 +3,16 @@
 declare( strict_types = 1 );
 
 use PHPUnit\Framework\TestCase;
+use File\MARC;
 use Umlts\MarcToolset\MarcMapWriter;
 use Umlts\MarcToolset\MarcMapKeyCreator;
 
 class customKeyCreator implements MarcMapKeyCreator {
     
-    static function getKeys( \File_MARC_Record $record ) : array {
+    static function getKeys( string $raw_record ) : array {
+        
+        $record = ( new File_MARC( $raw_record, File_MARC::SOURCE_STRING ) )->next();
+
         if ( empty( $record->getField( '245' ) ) ) { return [ -1 ]; }
         
         $keys = [];

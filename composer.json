@@ -14,11 +14,18 @@
             "Umlts\\MarcToolset\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/bartikowskiw/marc_reader"
+        }
+    ],
     "require": {
         "pear/file_marc": ">=1.2",
         "pear/Validate_ISPN": "dev-master",
         "php": ">=7.0",
-        "ext-xml": "*"
+        "ext-xml": "*",
+        "umlts/marc_reader": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.3"
