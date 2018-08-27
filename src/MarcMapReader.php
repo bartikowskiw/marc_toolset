@@ -56,13 +56,14 @@ class MarcMapReader {
      * @return void
      */
     function addRegexpToSqlite() {
+
         $this->db->createFunction(
             'PREG_MATCH',
             function ( string $regexp, string $string ) : bool {
                 return preg_match( '/' . $regexp . '/i', $string ) === 1;
             },
             2,
-            \PDO::SQLITE_DETERMINISTIC
+            defined( 'SQLITE3_DETERMINISTIC' ) ? SQLITE3_DETERMINISTIC : 0
         );
     }
 
