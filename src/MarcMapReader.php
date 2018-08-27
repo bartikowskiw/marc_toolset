@@ -57,16 +57,32 @@ class MarcMapReader {
      */
     function addRegexpToSqlite() {
 
-        $this->db->createFunction(
-            'PREG_MATCH',
-            function ( string $regexp, string $string ) : bool {
-                return preg_match( '/' . $regexp . '/i', $string ) === 1;
-            },
-            2,
-            defined( 'SQLITE3_DETERMINISTIC' ) ? SQLITE3_DETERMINISTIC : 0
-        );
-    }
+        // Use deterministic mode if PHP version >= 7.1.4
+        if ( defined( 'SQLITE3_DETERMINISTIC' ) ) {
 
+            $this->db->createFunction(
+                'PREG_MATCH',
+                function ( string $regexp, string $string ) : bool {
+                    return preg_match( '/' . $regexp . '/i', $string ) === 1;
+                },
+                2,
+                SQLITE3_DETERMINISTIC
+            );
+    
+        } else {
+
+            $this->db->createFunction(
+                'PREG_MATCH',
+                function ( string $regexp, string $string ) : bool {
+                    return preg_match( '/' . $regexp . '/i', $string ) === 1;
+                },
+                2
+            );
+            
+        }
+    
+    }
+    
     /**
      * Query the DB for the record.
      * This query assumes that there is only one record with this
