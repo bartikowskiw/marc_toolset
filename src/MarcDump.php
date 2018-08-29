@@ -22,6 +22,14 @@ class MarcDump extends MarcFileToolBase {
      *   Returns formatted string
      */
     public final function formatDump( string $dump ) : string {
+       
+        // Add ANSI Colors to Subfields
+        $dump = preg_replace(
+            '/^(... .. )(_[a-z0-9])/m',
+            '\1'. AnsiCodes::dim . '\2 ' . AnsiCodes::reset,
+            $dump
+        );
+
         // Add ANSI Colors to Fields
         $dump = preg_replace(
             '/(^[0-9]+)(.)(..)(.)/m',
@@ -31,17 +39,10 @@ class MarcDump extends MarcFileToolBase {
             $dump
         );
 
-        // Add ANSI Colors to Subfields
-        $dump = preg_replace(
-            '/_[a-z0-9]/m',
-            AnsiCodes::dim . '\0 ' . AnsiCodes::reset,
-            $dump
-        );
-
         // Add ANSI Colors to Fields
         $dump = preg_replace(
             '/^(LDR)(.)(.*)/m',
-            AnsiCodes::bold . '\1\2\3' . AnsiCodes::reset,
+            AnsiCodes::bold . '\1    \2\3' . AnsiCodes::reset,
             $dump
         );
 
